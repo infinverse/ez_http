@@ -13,3 +13,7 @@
 ## 1.0.3
 
 * Add response body type
+
+## 1.0.4
+
+* Small fixes

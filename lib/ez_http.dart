@@ -1,7 +1,5 @@
 library ez_http;
 
-import 'dart:nativewrappers/_internal/vm/lib/developer.dart';
-
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 

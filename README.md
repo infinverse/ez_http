@@ -15,7 +15,7 @@ Easy HTTP is a lightweight Flutter package that simplifies HTTP requests, making
 To use this package, add `ez_http` as a dependency in your `pubspec.yaml` file:
 ```yaml
 dependencies:
-  ez_http: ^1.0.2
+  ez_http: ^1.0.4
 ```
 
 Then run `dart pub get` or `flutter pub get` to install the package.
