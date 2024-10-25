@@ -1,10 +1,14 @@
 library ez_http;
 
+import 'dart:nativewrappers/_internal/vm/lib/developer.dart';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 /// Enum representing different content types for HTTP requests
 enum ContentType { json, urlEncoded, formData, plainText }
+
+enum ResponseBodyType { json, string, int, double, bool }
 
 class EasyHttpResponse {
   final dynamic body;
@@ -23,45 +27,55 @@ class EasyHttp {
   static Future<EasyHttpResponse?> get(String url,
       {Map<String, String>? headers,
       int maxRetry = 3,
-      int retryDelay = 1}) async {
+      int retryDelay = 1,
+      ResponseBodyType responseBodyType = ResponseBodyType.string}) async {
     return _sendRequest(http.get, url,
-        headers: headers, maxRetry: maxRetry, retryDelay: retryDelay);
+        headers: headers,
+        maxRetry: maxRetry,
+        retryDelay: retryDelay,
+        responseBodyType: responseBodyType);
   }
 
   static Future<EasyHttpResponse?> post(String url,
       {Map<String, dynamic>? body,
       Map<String, String>? headers,
       int maxRetry = 3,
-      int retryDelay = 1}) async {
+      int retryDelay = 1,
+      ResponseBodyType responseBodyType = ResponseBodyType.string}) async {
     return _sendRequest(http.post, url,
         body: body,
         headers: headers,
         maxRetry: maxRetry,
-        retryDelay: retryDelay);
+        retryDelay: retryDelay,
+        responseBodyType: responseBodyType);
   }
 
   static Future<EasyHttpResponse?> put(String url,
       {Map<String, dynamic>? body,
       Map<String, String>? headers,
       int maxRetry = 3,
-      int retryDelay = 1}) async {
+      int retryDelay = 1,
+      ResponseBodyType responseBodyType = ResponseBodyType.string}) async {
     return _sendRequest(http.put, url,
         body: body,
         headers: headers,
         maxRetry: maxRetry,
-        retryDelay: retryDelay);
+        retryDelay: retryDelay,
+        responseBodyType: responseBodyType);
   }
 
   static Future<EasyHttpResponse?> delete(String url,
       {Map<String, dynamic>? body,
       Map<String, String>? headers,
       int maxRetry = 3,
-      int retryDelay = 1}) async {
+      int retryDelay = 1,
+      ResponseBodyType responseBodyType = ResponseBodyType.string}) async {
     return _sendRequest(http.delete, url,
         body: body,
         headers: headers,
         maxRetry: maxRetry,
-        retryDelay: retryDelay);
+        retryDelay: retryDelay,
+        responseBodyType: responseBodyType);
   }
 
   /// Returns the appropriate content type string for the given ContentType enum
@@ -83,7 +97,8 @@ class EasyHttp {
       Map<String, String>? headers,
       ContentType? contentType,
       int maxRetry = 3,
-      int retryDelay = 1}) async {
+      int retryDelay = 1,
+      ResponseBodyType responseBodyType = ResponseBodyType.string}) async {
     int retryCount = 0;
     while (retryCount < maxRetry) {
       try {
@@ -99,7 +114,8 @@ class EasyHttp {
             : await method(uri, body: body, headers: headers);
 
         return EasyHttpResponse(
-          body: _parseResponseBody(response),
+          body:
+              _parseResponseBody(response, responseBodyType: responseBodyType),
           statusCode: response.statusCode,
           isRedirect: response.isRedirect,
         );
@@ -115,11 +131,21 @@ class EasyHttp {
     return null;
   }
 
-  static dynamic _parseResponseBody(http.Response response) {
-    final contentType = response.headers['content-type'];
-    if (contentType != null && contentType.contains('application/json')) {
-      return json.decode(response.body);
+  static dynamic _parseResponseBody(http.Response response,
+      {ResponseBodyType responseBodyType = ResponseBodyType.string}) {
+    switch (responseBodyType) {
+      case ResponseBodyType.json:
+        return json.decode(response.body);
+      case ResponseBodyType.string:
+        return response.body;
+      case ResponseBodyType.int:
+        return int.tryParse(response.body) ?? 0;
+      case ResponseBodyType.double:
+        return double.tryParse(response.body) ?? 0;
+      case ResponseBodyType.bool:
+        return response.body == 'true';
+      default:
+        return response.body;
     }
-    return response.body;
   }
 }
