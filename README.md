@@ -95,7 +95,7 @@ For more detailed examples and advanced usage, please check out the `/example` f
 
 ### Contributing
 
-Contributions are welcome! If you encounter any issues or have suggestions for improvements, please file an issue on the [GitHub repository](https://github.com/jackywongjw/ez_http).
+Contributions are welcome! If you encounter any issues or have suggestions for improvements, please file an issue on the [GitHub repository](https://github.com/infinverse/ez_http).
 
 ### License
 
