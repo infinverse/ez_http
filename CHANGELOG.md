@@ -17,3 +17,7 @@
 ## 1.0.4
 
 * Small fixes
+
+## 1.0.5
+
+* fix content type

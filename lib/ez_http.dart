@@ -39,10 +39,12 @@ class EasyHttp {
       Map<String, String>? headers,
       int maxRetry = 3,
       int retryDelay = 1,
+      ContentType? contentType,
       ResponseBodyType responseBodyType = ResponseBodyType.string}) async {
     return _sendRequest(http.post, url,
         body: body,
         headers: headers,
+        contentType: contentType,
         maxRetry: maxRetry,
         retryDelay: retryDelay,
         responseBodyType: responseBodyType);
@@ -53,10 +55,12 @@ class EasyHttp {
       Map<String, String>? headers,
       int maxRetry = 3,
       int retryDelay = 1,
+      ContentType? contentType,
       ResponseBodyType responseBodyType = ResponseBodyType.string}) async {
     return _sendRequest(http.put, url,
         body: body,
         headers: headers,
+        contentType: contentType,
         maxRetry: maxRetry,
         retryDelay: retryDelay,
         responseBodyType: responseBodyType);
@@ -67,17 +71,19 @@ class EasyHttp {
       Map<String, String>? headers,
       int maxRetry = 3,
       int retryDelay = 1,
+      ContentType? contentType,
       ResponseBodyType responseBodyType = ResponseBodyType.string}) async {
     return _sendRequest(http.delete, url,
         body: body,
         headers: headers,
+        contentType: contentType,
         maxRetry: maxRetry,
         retryDelay: retryDelay,
         responseBodyType: responseBodyType);
   }
 
   /// Returns the appropriate content type string for the given ContentType enum
-  static String getContentTypeString(ContentType contentType) {
+  static String getContentTypeString(ContentType? contentType) {
     switch (contentType) {
       case ContentType.json:
         return 'application/json';
@@ -87,6 +93,8 @@ class EasyHttp {
         return 'multipart/form-data';
       case ContentType.plainText:
         return 'text/plain';
+      default:
+        return 'application/x-www-form-urlencoded';
     }
   }
 
@@ -102,7 +110,7 @@ class EasyHttp {
       try {
         final uri = Uri.parse(url);
         headers ??= {};
-        if (contentType != null) {
+        if (body != null) {
           headers["Content-Type"] = getContentTypeString(contentType);
         }
 
