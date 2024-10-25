@@ -1,19 +1,6 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
-
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-
 # Easy HTTP
 
-Easy HTTP is a lightweight Dart package that simplifies HTTP requests, making it effortless to perform GET, POST, PUT, and DELETE operations. With an intuitive API, you can start making network requests right away without any complex setup.
+Easy HTTP is a lightweight Flutter package that simplifies HTTP requests, making it effortless to perform GET, POST, PUT, and DELETE operations. With an intuitive API, you can start making network requests right away without any complex setup.
 
 ## Features
 
@@ -26,10 +13,9 @@ Easy HTTP is a lightweight Dart package that simplifies HTTP requests, making it
 ## Getting started
 
 To use this package, add `ez_http` as a dependency in your `pubspec.yaml` file:
-
 ```yaml
 dependencies:
-  ez_http: ^1.0.0
+  ez_http: ^1.0.2
 ```
 
 Then run `dart pub get` or `flutter pub get` to install the package.

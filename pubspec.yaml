@@ -1,7 +1,8 @@
 name: ez_http
-description: "A easy use http package based on http"
+description: "A lightweight Flutter package that simplifies HTTP requests, providing an easy-to-use interface"
 version: 1.0.1
-homepage:
+homepage: https://github.com/infinverse/ez_http
+repository: https://github.com/infinverse/ez_http
 
 environment:
   sdk: ^3.5.3
