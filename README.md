@@ -15,7 +15,7 @@ Easy HTTP is a lightweight Flutter package that simplifies HTTP requests, making
 To use this package, add `ez_http` as a dependency in your `pubspec.yaml` file:
 ```yaml
 dependencies:
-  ez_http: ^1.0.4
+  ez_http: ^1.0.6
 ```
 
 Then run `dart pub get` or `flutter pub get` to install the package.
@@ -44,6 +44,8 @@ void main() async {
   final response = await EasyHttp.post(
     'https://api.example.com/users',
     body: {'name': 'John Doe', 'email': 'john@example.com'},
+    responseBodyType: ResponseBodyType.json,
+    contentType: ContentType.json,
   );
   print(response.statusCode);
   print(response.body);
@@ -59,6 +61,8 @@ void main() async {
   final response = await EasyHttp.put(
     'https://api.example.com/users/1',
     body: {'name': 'Jane Doe'},
+    responseBodyType: ResponseBodyType.json,
+    contentType: ContentType.json,
   );
   print(response.statusCode);
 }

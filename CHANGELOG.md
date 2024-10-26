@@ -1,12 +1,12 @@
-## 1.0.0
+## 1.0.6
 
-* Easy HTTP first release
+* fix send body
 
-## 1.0.1
+## 1.0.5
 
-* Small fixes
+* fix content type
 
-## 1.0.2
+## 1.0.4
 
 * Small fixes
 
@@ -14,10 +14,14 @@
 
 * Add response body type
 
-## 1.0.4
+## 1.0.2
 
 * Small fixes
 
-## 1.0.5
+## 1.0.1
 
-* fix content type
+* Small fixes
+
+## 1.0.0
+
+* Easy HTTP first release

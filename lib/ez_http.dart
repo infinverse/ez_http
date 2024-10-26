@@ -114,8 +114,7 @@ class EasyHttp {
           headers["Content-Type"] = getContentTypeString(contentType);
         }
 
-        final response = method is Future<http.Response> Function(Uri,
-                {Map<String, String>? headers})
+        final response = body == null
             ? await method(uri, headers: headers)
             : await method(uri, body: body, headers: headers);
 
