@@ -1,3 +1,7 @@
+## 1.0.7
+
+* fix json content type when send body
+
 ## 1.0.6
 
 * fix send body

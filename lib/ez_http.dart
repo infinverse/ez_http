@@ -110,13 +110,17 @@ class EasyHttp {
       try {
         final uri = Uri.parse(url);
         headers ??= {};
+        dynamic payload = body;
         if (body != null) {
           headers["Content-Type"] = getContentTypeString(contentType);
+          if (contentType == ContentType.json) {
+            payload = jsonEncode(body);
+          }
         }
 
         final response = body == null
             ? await method(uri, headers: headers)
-            : await method(uri, body: body, headers: headers);
+            : await method(uri, body: payload, headers: headers);
 
         return EasyHttpResponse(
           body:
