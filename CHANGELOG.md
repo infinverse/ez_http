@@ -1,3 +1,8 @@
+## 1.0.8
+
+* UTF-8 encoding fix
+* Type support
+
 ## 1.0.7
 
 * fix json content type when send body

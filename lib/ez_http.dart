@@ -8,8 +8,8 @@ enum ContentType { json, urlEncoded, formData, plainText }
 
 enum ResponseBodyType { json, string, int, double, bool }
 
-class EasyHttpResponse {
-  final dynamic body;
+class EasyHttpResponse<T> {
+  final T body;
   final int statusCode;
   final bool isRedirect;
 
@@ -22,26 +22,29 @@ class EasyHttpResponse {
 
 /// A easy to use HTTP package based on the http package
 class EasyHttp {
-  static Future<EasyHttpResponse?> get(String url,
+  static Future<EasyHttpResponse<T>?> get<T>(String url,
       {Map<String, String>? headers,
       int maxRetry = 3,
       int retryDelay = 1,
       ResponseBodyType responseBodyType = ResponseBodyType.string}) async {
-    return _sendRequest(http.get, url,
-        headers: headers,
-        maxRetry: maxRetry,
-        retryDelay: retryDelay,
-        responseBodyType: responseBodyType);
+    return _sendRequest<T>(
+      http.get,
+      url,
+      headers: headers,
+      maxRetry: maxRetry,
+      retryDelay: retryDelay,
+      responseBodyType: responseBodyType,
+    );
   }
 
-  static Future<EasyHttpResponse?> post(String url,
+  static Future<EasyHttpResponse<T>?> post<T>(String url,
       {Map<String, dynamic>? body,
       Map<String, String>? headers,
       int maxRetry = 3,
       int retryDelay = 1,
       ContentType? contentType,
       ResponseBodyType responseBodyType = ResponseBodyType.string}) async {
-    return _sendRequest(http.post, url,
+    return _sendRequest<T>(http.post, url,
         body: body,
         headers: headers,
         contentType: contentType,
@@ -50,14 +53,14 @@ class EasyHttp {
         responseBodyType: responseBodyType);
   }
 
-  static Future<EasyHttpResponse?> put(String url,
+  static Future<EasyHttpResponse<T>?> put<T>(String url,
       {Map<String, dynamic>? body,
       Map<String, String>? headers,
       int maxRetry = 3,
       int retryDelay = 1,
       ContentType? contentType,
       ResponseBodyType responseBodyType = ResponseBodyType.string}) async {
-    return _sendRequest(http.put, url,
+    return _sendRequest<T>(http.put, url,
         body: body,
         headers: headers,
         contentType: contentType,
@@ -66,14 +69,14 @@ class EasyHttp {
         responseBodyType: responseBodyType);
   }
 
-  static Future<EasyHttpResponse?> delete(String url,
+  static Future<EasyHttpResponse<T>?> delete<T>(String url,
       {Map<String, dynamic>? body,
       Map<String, String>? headers,
       int maxRetry = 3,
       int retryDelay = 1,
       ContentType? contentType,
       ResponseBodyType responseBodyType = ResponseBodyType.string}) async {
-    return _sendRequest(http.delete, url,
+    return _sendRequest<T>(http.delete, url,
         body: body,
         headers: headers,
         contentType: contentType,
@@ -98,7 +101,8 @@ class EasyHttp {
     }
   }
 
-  static Future<EasyHttpResponse?> _sendRequest(Function method, String url,
+  static Future<EasyHttpResponse<T>?> _sendRequest<T>(
+      Function method, String url,
       {Map<String, dynamic>? body,
       Map<String, String>? headers,
       ContentType? contentType,
@@ -122,9 +126,9 @@ class EasyHttp {
             ? await method(uri, headers: headers)
             : await method(uri, body: payload, headers: headers);
 
-        return EasyHttpResponse(
-          body:
-              _parseResponseBody(response, responseBodyType: responseBodyType),
+        return EasyHttpResponse<T>(
+          body: _parseResponseBody(response, responseBodyType: responseBodyType)
+              as T,
           statusCode: response.statusCode,
           isRedirect: response.isRedirect,
         );
@@ -142,19 +146,21 @@ class EasyHttp {
 
   static dynamic _parseResponseBody(http.Response response,
       {ResponseBodyType responseBodyType = ResponseBodyType.string}) {
+    final decodedBody = utf8.decode(response.bodyBytes);
+
     switch (responseBodyType) {
       case ResponseBodyType.json:
-        return json.decode(response.body);
+        return json.decode(decodedBody);
       case ResponseBodyType.string:
-        return response.body;
+        return decodedBody;
       case ResponseBodyType.int:
-        return int.tryParse(response.body) ?? 0;
+        return int.tryParse(decodedBody) ?? 0;
       case ResponseBodyType.double:
-        return double.tryParse(response.body) ?? 0;
+        return double.tryParse(decodedBody) ?? 0;
       case ResponseBodyType.bool:
-        return response.body == 'true';
+        return decodedBody == 'true';
       default:
-        return response.body;
+        return decodedBody;
     }
   }
 }

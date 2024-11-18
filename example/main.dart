@@ -30,12 +30,19 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetchData(String method) async {
     const String url = 'https://httpbin.org/';
-    const Map<String, dynamic> body = {'key': 'value'};
-    final EasyHttpResponse? response = await _sendRequest(method, url, body);
+    const Map<String, dynamic> body = {'name': 'John Doe', 'age': 30};
+
+    // Using generic type and specifying response body type
+    final EasyHttpResponse<Map<String, dynamic>>? response =
+        await _sendRequest(method, url, body);
 
     if (response != null) {
       setState(() {
-        _response = _formatResponse(response.body);
+        _response = '''
+Status Code: ${response.statusCode}
+Is Redirect: ${response.isRedirect}
+Body:
+${_formatResponse(response.body)}''';
       });
     } else {
       setState(() {
@@ -44,17 +51,35 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<EasyHttpResponse?> _sendRequest(
+  Future<EasyHttpResponse<Map<String, dynamic>>?> _sendRequest(
       String method, String url, Map<String, dynamic> body) async {
     switch (method) {
       case 'get':
-        return await EasyHttp.get('$url$method');
+        return await EasyHttp.get<Map<String, dynamic>>(
+          '$url$method',
+          responseBodyType: ResponseBodyType.json,
+        );
       case 'post':
-        return await EasyHttp.post('$url$method', body: body);
+        return await EasyHttp.post<Map<String, dynamic>>(
+          '$url$method',
+          body: body,
+          contentType: ContentType.json,
+          responseBodyType: ResponseBodyType.json,
+        );
       case 'put':
-        return await EasyHttp.put('$url$method', body: body);
+        return await EasyHttp.put<Map<String, dynamic>>(
+          '$url$method',
+          body: body,
+          contentType: ContentType.json,
+          responseBodyType: ResponseBodyType.json,
+        );
       case 'delete':
-        return await EasyHttp.delete('$url$method', body: body);
+        return await EasyHttp.delete<Map<String, dynamic>>(
+          '$url$method',
+          body: body,
+          contentType: ContentType.json,
+          responseBodyType: ResponseBodyType.json,
+        );
       default:
         return null;
     }

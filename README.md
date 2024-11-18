@@ -15,7 +15,7 @@ Easy HTTP is a lightweight Flutter package that simplifies HTTP requests, making
 To use this package, add `ez_http` as a dependency in your `pubspec.yaml` file:
 ```yaml
 dependencies:
-  ez_http: ^1.0.6
+  ez_http: ^1.0.8
 ```
 
 Then run `dart pub get` or `flutter pub get` to install the package.
@@ -30,7 +30,14 @@ Here are some quick examples to get you started with Easy HTTP:
 import 'package:ez_http/ez_http.dart';
 
 void main() async {
-  final response = await EasyHttp.get('https://api.example.com/users');
+  Map<String, dynamic> response = await EasyHttp.get<Map<String, dynamic>>(
+    'https://api.example.com/users',
+    responseBodyType: ResponseBodyType.json,
+  );
+  final response2 = await EasyHttp.get(
+    'https://api.example.com/users2',
+    responseBodyType: ResponseBodyType.json,
+  );
   print(response.body);
 }
 ```
@@ -41,7 +48,7 @@ void main() async {
 import 'package:ez_http/ez_http.dart';
 
 void main() async {
-  final response = await EasyHttp.post(
+  Map<String, dynamic> response = await EasyHttp.post<Map<String, dynamic>>(
     'https://api.example.com/users',
     body: {'name': 'John Doe', 'email': 'john@example.com'},
     responseBodyType: ResponseBodyType.json,
@@ -58,7 +65,7 @@ void main() async {
 import 'package:ez_http/ez_http.dart';
 
 void main() async {
-  final response = await EasyHttp.put(
+  Map<String, dynamic> response = await EasyHttp.put<Map<String, dynamic>>(
     'https://api.example.com/users/1',
     body: {'name': 'Jane Doe'},
     responseBodyType: ResponseBodyType.json,
@@ -74,7 +81,9 @@ void main() async {
 import 'package:ez_http/ez_http.dart';
 
 void main() async {
-  final response = await EasyHttp.delete('https://api.example.com/users/1');
+  Map<String, dynamic> response = await EasyHttp.delete<Map<String, dynamic>>(
+    'https://api.example.com/users/1',
+  );
   print(response.statusCode);
 }
 ```
