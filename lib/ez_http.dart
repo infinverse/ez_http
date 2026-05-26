@@ -12,6 +12,90 @@ enum ResponseBodyType { raw, json, string, int, double, bool, binary }
 
 enum _HttpMethod { get, post, put, delete }
 
+class EasyHttpFile {
+  final http.MultipartFile _multipartFile;
+
+  EasyHttpFile._(this._multipartFile);
+
+  factory EasyHttpFile.bytes({
+    String field = 'file',
+    required List<int> bytes,
+    String? filename,
+  }) {
+    return EasyHttpFile._(
+      http.MultipartFile.fromBytes(
+        field,
+        bytes,
+        filename: filename,
+      ),
+    );
+  }
+
+  static Future<EasyHttpFile> path({
+    String field = 'file',
+    required String path,
+    String? filename,
+  }) async {
+    return EasyHttpFile._(
+      await http.MultipartFile.fromPath(
+        field,
+        path,
+        filename: filename,
+      ),
+    );
+  }
+
+  factory EasyHttpFile.text({
+    String field = 'file',
+    required String value,
+    String? filename,
+  }) {
+    return EasyHttpFile._(
+      http.MultipartFile.fromString(
+        field,
+        value,
+        filename: filename,
+      ),
+    );
+  }
+
+  factory EasyHttpFile.fromBytes(
+    String field,
+    List<int> value, {
+    String? filename,
+  }) {
+    return EasyHttpFile.bytes(
+      field: field,
+      bytes: value,
+      filename: filename,
+    );
+  }
+
+  static Future<EasyHttpFile> fromPath(
+    String field,
+    String filePath, {
+    String? filename,
+  }) {
+    return EasyHttpFile.path(
+      field: field,
+      path: filePath,
+      filename: filename,
+    );
+  }
+
+  factory EasyHttpFile.fromString(
+    String field,
+    String value, {
+    String? filename,
+  }) {
+    return EasyHttpFile.text(
+      field: field,
+      value: value,
+      filename: filename,
+    );
+  }
+}
+
 class EasyHttpResponse<T> {
   final T body;
   final int statusCode;
@@ -30,6 +114,78 @@ void _printLog(String message) {
 
 /// A easy to use HTTP package based on the http package
 class EasyHttp {
+  static EasyHttpFile fileFromBytes(
+    String field,
+    List<int> value, {
+    String? filename,
+  }) {
+    return EasyHttpFile.bytes(
+      field: field,
+      bytes: value,
+      filename: filename,
+    );
+  }
+
+  static Future<EasyHttpFile> fileFromPath(
+    String field,
+    String filePath, {
+    String? filename,
+  }) {
+    return EasyHttpFile.path(
+      field: field,
+      path: filePath,
+      filename: filename,
+    );
+  }
+
+  static EasyHttpFile fileFromString(
+    String field,
+    String value, {
+    String? filename,
+  }) {
+    return EasyHttpFile.text(
+      field: field,
+      value: value,
+      filename: filename,
+    );
+  }
+
+  static EasyHttpFile fileBytes({
+    String field = 'file',
+    required List<int> bytes,
+    String? filename,
+  }) {
+    return EasyHttpFile.bytes(
+      field: field,
+      bytes: bytes,
+      filename: filename,
+    );
+  }
+
+  static Future<EasyHttpFile> filePath({
+    String field = 'file',
+    required String path,
+    String? filename,
+  }) {
+    return EasyHttpFile.path(
+      field: field,
+      path: path,
+      filename: filename,
+    );
+  }
+
+  static EasyHttpFile fileText({
+    String field = 'file',
+    required String value,
+    String? filename,
+  }) {
+    return EasyHttpFile.text(
+      field: field,
+      value: value,
+      filename: filename,
+    );
+  }
+
   static Future<EasyHttpResponse<T>?> get<T>(String url,
       {Map<String, String>? headers,
       int maxRetry = 3,
@@ -49,7 +205,7 @@ class EasyHttp {
 
   static Future<EasyHttpResponse<T>?> post<T>(String url,
       {Object? body,
-      List<http.MultipartFile>? files,
+      List<EasyHttpFile>? files,
       Map<String, String>? headers,
       int maxRetry = 3,
       int retryDelay = 1,
@@ -69,7 +225,7 @@ class EasyHttp {
 
   static Future<EasyHttpResponse<T>?> put<T>(String url,
       {Object? body,
-      List<http.MultipartFile>? files,
+      List<EasyHttpFile>? files,
       Map<String, String>? headers,
       int maxRetry = 3,
       int retryDelay = 1,
@@ -89,7 +245,7 @@ class EasyHttp {
 
   static Future<EasyHttpResponse<T>?> delete<T>(String url,
       {Object? body,
-      List<http.MultipartFile>? files,
+      List<EasyHttpFile>? files,
       Map<String, String>? headers,
       int maxRetry = 3,
       int retryDelay = 1,
@@ -125,7 +281,7 @@ class EasyHttp {
   static Future<EasyHttpResponse<T>?> _sendRequest<T>(
       _HttpMethod method, String url,
       {Object? body,
-      List<http.MultipartFile>? files,
+      List<EasyHttpFile>? files,
       Map<String, String>? headers,
       ContentType? contentType,
       int maxRetry = 3,
@@ -187,7 +343,7 @@ class EasyHttp {
     _HttpMethod method,
     Uri uri, {
     Object? body,
-    List<http.MultipartFile>? files,
+    List<EasyHttpFile>? files,
     Map<String, String>? headers,
     ContentType? contentType,
   }) async {
@@ -224,13 +380,13 @@ class EasyHttp {
 
   static bool _shouldSendMultipart(
     ContentType? contentType,
-    List<http.MultipartFile>? files,
+    List<EasyHttpFile>? files,
   ) {
     return contentType == ContentType.formData ||
         (files != null && files.isNotEmpty);
   }
 
-  static bool _canRetryRequest(List<http.MultipartFile>? files) {
+  static bool _canRetryRequest(List<EasyHttpFile>? files) {
     return files == null || files.isEmpty;
   }
 
@@ -268,7 +424,7 @@ class EasyHttp {
     _HttpMethod method,
     Uri uri, {
     Object? body,
-    List<http.MultipartFile>? files,
+    List<EasyHttpFile>? files,
     required Map<String, String> headers,
   }) async {
     if (body != null && body is! Map) {
@@ -283,7 +439,9 @@ class EasyHttp {
     }
 
     if (files != null && files.isNotEmpty) {
-      request.files.addAll(files);
+      request.files.addAll(
+        files.map((file) => file._multipartFile),
+      );
     }
 
     final streamedResponse = await client.send(request);

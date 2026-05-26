@@ -17,7 +17,7 @@ Easy HTTP is a lightweight Flutter package that simplifies HTTP requests, making
 To use this package, add `ez_http` as a dependency in your `pubspec.yaml` file:
 ```yaml
 dependencies:
-  ez_http: ^1.0.10
+  ez_http: ^1.0.11
 ```
 
 Then run `dart pub get` or `flutter pub get` to install the package.
@@ -97,20 +97,69 @@ void main() async {
 
 ### Multipart File Upload
 
+Most apps only need one of these three options:
+
+- `EasyHttpFile.bytes(...)`: when your file is already in memory
+- `await EasyHttpFile.path(...)`: when you already have a local file path
+- `EasyHttpFile.text(...)`: when you want to upload plain text as a file
+
+The `field` name defaults to `file`, so the simplest examples do not need to set it.
+
+### Upload Bytes
+
 ```dart
 import 'package:ez_http/ez_http.dart';
-import 'package:http/http.dart' as http;
 
 void main() async {
-  final file = http.MultipartFile.fromBytes(
-    'avatar',
-    [1, 2, 3, 4],
+  final file = EasyHttpFile.bytes(
+    bytes: [1, 2, 3, 4],
     filename: 'avatar.png',
   );
 
   final response = await EasyHttp.post<String>(
     'https://api.example.com/upload',
     body: {'userId': '42'},
+    files: [file],
+  );
+
+  print(response?.statusCode);
+}
+```
+
+### Upload A Local File Path
+
+```dart
+import 'package:ez_http/ez_http.dart';
+
+void main() async {
+  final file = await EasyHttpFile.path(
+    path: '/path/to/avatar.png',
+    filename: 'avatar.png',
+  );
+
+  final response = await EasyHttp.post<String>(
+    'https://api.example.com/upload',
+    body: {'userId': '42'},
+    files: [file],
+  );
+
+  print(response?.statusCode);
+}
+```
+
+### Upload Text As A File
+
+```dart
+import 'package:ez_http/ez_http.dart';
+
+void main() async {
+  final file = EasyHttpFile.text(
+    value: 'Hello from ez_http',
+    filename: 'note.txt',
+  );
+
+  final response = await EasyHttp.post<String>(
+    'https://api.example.com/upload',
     files: [file],
   );
 
@@ -125,18 +174,18 @@ void main() async {
   `application/x-www-form-urlencoded`.
 - `ContentType.formData`: a `Map` body is sent as `multipart/form-data`, and
   `EasyHttp` manages the multipart boundary header for you.
-- `files`: pass `List<http.MultipartFile>` to upload files with multipart form
-  requests. If `files` is not empty, `EasyHttp` automatically uses multipart.
+- `files`: pass `List<EasyHttpFile>`. If `files` is not empty, `EasyHttp`
+  automatically uses multipart.
 - `ContentType.plainText`: sends the body as a string.
 
-Create `http.MultipartFile` with whichever constructor matches your platform:
+Create upload files with the matching `EasyHttpFile` constructor:
 
-- `http.MultipartFile.fromPath(...)`: useful on mobile/desktop when you have a file path.
-- `http.MultipartFile.fromBytes(...)`: useful for web or in-memory file data.
-- `http.MultipartFile.fromString(...)`: useful for text file uploads in tests.
+- `await EasyHttpFile.path(...)`: useful on mobile/desktop when you have a file path.
+- `EasyHttpFile.bytes(...)`: useful for web or in-memory file data.
+- `EasyHttpFile.text(...)`: useful for text file uploads in tests.
 
 Multipart file uploads are sent once per call. If an upload fails, create fresh
-`http.MultipartFile` instances before calling `EasyHttp` again.
+files with the `EasyHttpFile` constructors before calling `EasyHttp` again.
 
 ### Response Body Types
 

@@ -1,6 +1,13 @@
+## 1.0.11
+
+* Add more intuitive `EasyHttpFile.bytes`, `EasyHttpFile.path`, and `EasyHttpFile.text` constructors
+* Keep `EasyHttpFile.from...` compatibility while making the file-upload API more readable
+* Add simple bytes, path, and text upload examples to README
+
 ## 1.0.10
 
-* Finalize multipart file upload support via `files: List<http.MultipartFile>`
+* Finalize multipart file upload support via `files: List<EasyHttpFile>`
+* Add `EasyHttpFile.fromPath`, `EasyHttpFile.fromBytes`, and `EasyHttpFile.fromString`
 * Document file upload usage and multipart retry behavior in README
 * Add tests covering multipart file uploads and no-retry behavior for finalized files
 

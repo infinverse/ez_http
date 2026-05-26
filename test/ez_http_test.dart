@@ -123,9 +123,8 @@ void main() {
         'https://example.com/upload',
         body: {'folder': 'avatars'},
         files: [
-          http.MultipartFile.fromString(
-            'file',
-            'hello world',
+          EasyHttpFile.text(
+            value: 'hello world',
             filename: 'hello.txt',
           ),
         ],
@@ -175,9 +174,8 @@ void main() {
       final response = await EasyHttp.post<String>(
         'https://example.com/upload',
         files: [
-          http.MultipartFile.fromString(
-            'file',
-            'hello world',
+          EasyHttpFile.text(
+            value: 'hello world',
             filename: 'hello.txt',
           ),
         ],
