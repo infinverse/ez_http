@@ -1,3 +1,13 @@
+## 1.0.9
+
+* Fix strict analyzer warning caused by an unreachable switch default branch
+* Fix binary responses to return raw `bodyBytes` without UTF-8 decoding
+* Send real multipart form-data requests instead of only setting the header
+* Add multipart file upload support via `files: List<http.MultipartFile>`
+* Prevent invalid automatic retries for finalized multipart file uploads
+* Allow injecting a custom `http.Client` for reuse and testing
+* Correct README examples and document request/response behavior
+
 ## 1.0.8
 
 * UTF-8 encoding fix
