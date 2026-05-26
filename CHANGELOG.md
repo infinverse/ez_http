@@ -1,3 +1,9 @@
+## 1.0.10
+
+* Finalize multipart file upload support via `files: List<http.MultipartFile>`
+* Document file upload usage and multipart retry behavior in README
+* Add tests covering multipart file uploads and no-retry behavior for finalized files
+
 ## 1.0.9
 
 * Fix strict analyzer warning caused by an unreachable switch default branch

@@ -110,6 +110,45 @@ void main() {
       expect(multipartBody, contains('abc123'));
     });
 
+    test('uploads multipart files and switches to multipart automatically',
+        () async {
+      late http.Request capturedRequest;
+
+      final client = MockClient((request) async {
+        capturedRequest = request;
+        return http.Response('uploaded', 200);
+      });
+
+      final response = await EasyHttp.post<String>(
+        'https://example.com/upload',
+        body: {'folder': 'avatars'},
+        files: [
+          http.MultipartFile.fromString(
+            'file',
+            'hello world',
+            filename: 'hello.txt',
+          ),
+        ],
+        client: client,
+      );
+
+      final multipartBody = utf8.decode(
+        capturedRequest.bodyBytes,
+        allowMalformed: true,
+      );
+
+      expect(response, isNotNull);
+      expect(
+        capturedRequest.headers['content-type'] ??
+            capturedRequest.headers['Content-Type'],
+        startsWith('multipart/form-data; boundary='),
+      );
+      expect(multipartBody, contains('name="folder"'));
+      expect(multipartBody, contains('avatars'));
+      expect(multipartBody, contains('name="file"; filename="hello.txt"'));
+      expect(multipartBody, contains('hello world'));
+    });
+
     test('returns binary response bytes untouched', () async {
       final bytes = Uint8List.fromList([0, 1, 2, 255]);
       final client = MockClient((request) async {
@@ -124,6 +163,31 @@ void main() {
 
       expect(response, isNotNull);
       expect(response!.body, orderedEquals(bytes));
+    });
+
+    test('does not retry multipart file uploads automatically', () async {
+      var attempts = 0;
+      final client = MockClient((request) async {
+        attempts++;
+        throw Exception('temporary upload failure');
+      });
+
+      final response = await EasyHttp.post<String>(
+        'https://example.com/upload',
+        files: [
+          http.MultipartFile.fromString(
+            'file',
+            'hello world',
+            filename: 'hello.txt',
+          ),
+        ],
+        client: client,
+        maxRetry: 3,
+        retryDelay: 0,
+      );
+
+      expect(attempts, 1);
+      expect(response, isNull);
     });
 
     test('retries failed requests up to maxRetry', () async {

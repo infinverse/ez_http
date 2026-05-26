@@ -9,6 +9,7 @@ Easy HTTP is a lightweight Flutter package that simplifies HTTP requests, making
 - 🎯 Minimal setup required - start using it immediately
 - 🔄 Easy handling of JSON data
 - 🛠 Customizable headers and request parameters
+- 📎 Multipart form uploads with fields and files
 - 🧪 Optional custom `http.Client` for tests or client reuse
 
 ## Getting started
@@ -16,7 +17,7 @@ Easy HTTP is a lightweight Flutter package that simplifies HTTP requests, making
 To use this package, add `ez_http` as a dependency in your `pubspec.yaml` file:
 ```yaml
 dependencies:
-  ez_http: ^1.0.9
+  ez_http: ^1.0.10
 ```
 
 Then run `dart pub get` or `flutter pub get` to install the package.
@@ -94,6 +95,29 @@ void main() async {
 }
 ```
 
+### Multipart File Upload
+
+```dart
+import 'package:ez_http/ez_http.dart';
+import 'package:http/http.dart' as http;
+
+void main() async {
+  final file = http.MultipartFile.fromBytes(
+    'avatar',
+    [1, 2, 3, 4],
+    filename: 'avatar.png',
+  );
+
+  final response = await EasyHttp.post<String>(
+    'https://api.example.com/upload',
+    body: {'userId': '42'},
+    files: [file],
+  );
+
+  print(response?.statusCode);
+}
+```
+
 ### Body Types
 
 - `ContentType.json`: accepts any JSON-encodable object and sends it as JSON.
@@ -101,7 +125,18 @@ void main() async {
   `application/x-www-form-urlencoded`.
 - `ContentType.formData`: a `Map` body is sent as `multipart/form-data`, and
   `EasyHttp` manages the multipart boundary header for you.
+- `files`: pass `List<http.MultipartFile>` to upload files with multipart form
+  requests. If `files` is not empty, `EasyHttp` automatically uses multipart.
 - `ContentType.plainText`: sends the body as a string.
+
+Create `http.MultipartFile` with whichever constructor matches your platform:
+
+- `http.MultipartFile.fromPath(...)`: useful on mobile/desktop when you have a file path.
+- `http.MultipartFile.fromBytes(...)`: useful for web or in-memory file data.
+- `http.MultipartFile.fromString(...)`: useful for text file uploads in tests.
+
+Multipart file uploads are sent once per call. If an upload fails, create fresh
+`http.MultipartFile` instances before calling `EasyHttp` again.
 
 ### Response Body Types
 
@@ -134,6 +169,9 @@ void main() async {
   }
 }
 ```
+
+If you pass a custom `client`, you are responsible for closing it. If you do
+not pass one, `EasyHttp` creates and closes its own client internally.
 
 ## Additional information
 
