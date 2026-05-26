@@ -6,6 +6,7 @@
 * Add multipart file upload support via `files: List<http.MultipartFile>`
 * Prevent invalid automatic retries for finalized multipart file uploads
 * Allow injecting a custom `http.Client` for reuse and testing
+* Update `http` and `flutter_lints` to their latest resolvable versions
 * Correct README examples and document request/response behavior
 
 ## 1.0.8

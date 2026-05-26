@@ -1,4 +1,4 @@
-library ez_http;
+library;
 
 import 'dart:convert';
 
@@ -161,11 +161,7 @@ class EasyHttp {
         } catch (e) {
           _printLog("Error: $e");
           retryCount++;
-          if (retryCount >= maxRetry || !_canRetryRequest(files)) {
-            if (!_canRetryRequest(files)) {
-              _printLog(
-                  "Multipart file uploads are not retried automatically.");
-            }
+          if (retryCount >= maxRetry) {
             _printLog("Max retry reached. Returning null.");
             return null;
           }
@@ -228,10 +224,6 @@ class EasyHttp {
   ) {
     return contentType == ContentType.formData ||
         (files != null && files.isNotEmpty);
-  }
-
-  static bool _canRetryRequest(List<http.MultipartFile>? files) {
-    return files == null || files.isEmpty;
   }
 
   static Object? _preparePayload(
